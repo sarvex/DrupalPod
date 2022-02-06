@@ -9,10 +9,15 @@ tasks:
       .gitpod/drupal/envs-prep/prepare-environments-gcs.sh
       .gitpod/drupal/envs-prep/set-default-environment.sh
     command: |
+      echo "BEFORE ddev-in-gitpod-setup !!!"
       .gitpod/utils/ddev-in-gitpod-setup.sh
+      echo "BEFORE env-setup !!!"
       .gitpod/utils/env-setup.sh
+      echo "BEFORE 01-check-private-ssh !!!"
       .gitpod/drupal/ssh/01-check-private-ssh.sh
+      echo "BEFORE drupalpod-setup !!!"
       .gitpod/drupal/drupalpod-setup.sh
+      echo "AFTER drupalpod-setup !!!"
 
 # VScode xdebug extension
 vscode:
