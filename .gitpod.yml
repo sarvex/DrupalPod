@@ -4,7 +4,8 @@ image: drupalpod/drupalpod-gitpod-base:20220206-optimized
 tasks:
   - init: |
       echo "Just a message during prebuild"
-      # .gitpod/utils/send-a-message-gcs.sh
+      .gitpod/utils/send-a-message-gcs.sh
+      echo "after send-message script"
       # ddev debug download-images
       # .gitpod/utils/ddev-in-gitpod-setup.sh
       # .gitpod/drupal/envs-prep/prepare-environments-gcs.sh
