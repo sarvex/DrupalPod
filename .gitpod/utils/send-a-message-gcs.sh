@@ -20,7 +20,7 @@ fi
 
 # Establish connection with Google Cloud through Minio client
 mc config host add gcs https://storage.googleapis.com "$DP_GOOGLE_ACCESS_KEY" "$DP_GOOGLE_SECRET"
-clear
+
 # If there's a problem send the error code
 # if mc find gcs/drupalpod/ready-made-envs.tar.gz; then
 #     message="Success: Google Cloud is ready"
