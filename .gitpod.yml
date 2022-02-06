@@ -27,7 +27,7 @@ vscode:
     - mblode.twig-language-2
 
     # Help extensions.
-    - drupal-mentoring.drupalpod-ext
+    # - drupal-mentoring.drupalpod-ext
 
     # Bash extensions.
     - timonwong.shellcheck
