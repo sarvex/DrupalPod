@@ -1,12 +1,48 @@
-FROM gitpod/workspace-base as workspace-base
+# FROM gitpod/workspace-base as workspace-base
+FROM ubuntu as ubuntu-base
+
 SHELL ["/bin/bash", "-c"]
-# ENV HOMEBREW_INSTALL_FROM_API=true
 
-RUN sudo apt-get -qq update
-# RUN sudo apt-get -qq install -y apt-utils
+RUN apt-get update \
+    && apt-get install -yq --no-install-recommends \
+    software-properties-common \
+    && add-apt-repository -y ppa:git-core/ppa \
+    && apt-get install -yq --no-install-recommends \
+    git \
+    sudo \
+    dialog \
+    curl \
+    wget \
+    && apt-get clean -y \
+    && rm -rf \
+    /var/cache/debconf/* \
+    /var/lib/apt/lists/* \
+    /tmp/* \
+    /var/tmp/*
 
-# Install dialog (interactive script)
-RUN sudo apt-get -qq install -y dialog
+# FROM ubuntu:21.04
+# USER root
+# COPY install-packages /usr/bin
+COPY install-packages upgrade-packages /usr/bin/
+
+# https://github.com/gitpod-io/workspace-images/blob/master/base/Dockerfile#L43
+### Gitpod user ###
+# '-l': see https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user
+RUN useradd -l -u 33333 -G sudo -md /home/gitpod -s /bin/bash -p gitpod gitpod \
+    # passwordless sudo for users in the 'sudo' group
+    && sed -i.bkp -e 's/%sudo\s\+ALL=(ALL\(:ALL\)\?)\s\+ALL/%sudo ALL=NOPASSWD:ALL/g' /etc/sudoers
+ENV HOME=/home/gitpod
+WORKDIR $HOME
+# custom Bash prompt
+RUN { echo && echo "PS1='\[\033[01;32m\]\u\[\033[00m\] \[\033[01;34m\]\w\[\033[00m\]\$(__git_ps1 \" (%s)\") $ '" ; } >> .bashrc
+
+### Gitpod user (2) ###
+USER gitpod
+# use sudo so that user does not get sudo usage info on (the first) login
+RUN sudo echo "Running 'sudo' for Gitpod: success" && \
+    # create .bashrc.d folder and source it in the bashrc
+    mkdir -p /home/gitpod/.bashrc.d && \
+    (echo; echo "for i in \$(ls -A \$HOME/.bashrc.d/); do source \$HOME/.bashrc.d/\$i; done"; echo) >> /home/gitpod/.bashrc
 
 # code from https://github.com/gitpod-io/workspace-images/blob/master/chunks/tool-docker/Dockerfile
 USER root
@@ -14,6 +50,7 @@ USER root
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
     $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null \
+    # && apt-get update && apt-get install -yq --no-install-recommends docker-ce docker-ce-cli containerd.io
     && install-packages docker-ce docker-ce-cli containerd.io
 
 RUN curl -o /usr/bin/slirp4netns -fsSL https://github.com/rootless-containers/slirp4netns/releases/download/v1.1.12/slirp4netns-$(uname -m) \
@@ -118,4 +155,4 @@ SHELL ["/bin/bash", "-c"]
 # ENV MANPATH="$MANPATH:/home/linuxbrew/.linuxbrew/share/man"
 # ENV INFOPATH="$INFOPATH:/home/linuxbrew/.linuxbrew/share/info"
 
-COPY --from=workspace-base / /
+COPY --from=ubuntu-base / /
