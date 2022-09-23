@@ -109,7 +109,7 @@ const selector = {
         this.coreVersion +
         "," +
         "DP_PATCH_FILE=" +
-        this.patchFile +
+        encodeURIComponent(this.patchFile) +
         "/https://github.com/shaal/drupalpod"
       );
     }
