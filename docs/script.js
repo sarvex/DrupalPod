@@ -94,22 +94,22 @@ const selector = {
         this.installProfile +
         "," +
         "DP_PROJECT_NAME=" +
-        this.projectName +
+        this.projectName.trim() +
         "," +
         "DP_ISSUE_FORK=" +
-        this.issueFork +
+        this.issueFork.trim() +
         "," +
         "DP_ISSUE_BRANCH=" +
-        this.issueBranch +
+        this.issueBranch.trim() +
         "," +
         "DP_MODULE_VERSION=" +
-        this.moduleVersion +
+        this.moduleVersion.trim() +
         "," +
         "DP_CORE_VERSION=" +
-        this.coreVersion +
+        this.coreVersion.trim() +
         "," +
         "DP_PATCH_FILE=" +
-        encodeURIComponent(this.patchFile) +
+        encodeURIComponent(this.patchFile.trim()) +
         "/https://github.com/shaal/drupalpod"
       );
     }
